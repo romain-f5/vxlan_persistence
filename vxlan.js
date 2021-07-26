@@ -1,19 +1,15 @@
 var client_id_str = "-";
-var proto = "0"; // protocol number - 1 for icmp, 6 for tcp etc.
-var ip01 = "0"; // 1st octet of ip address in source
-var ip02 = "0"; // 1st octet of ip address in dest
+var client_id_hash = "-";
 
 function getClientId(s) {
     s.on('upload', function (data, flags) {
       if ( data.length != 0 ) {
-        proto = data.charCodeAt(31);
-        ip01 = data.charCodeAt(34);
-        ip02 = data.charCodeAt(38);
+        client_id_hash = (data.charCodeAt(31) + data.charCodeAt(34) + data.charCodeAt(38) + data.charCodeAt(43) + data.charCodeAt(45)).toString()
+        // client_id_hash is the sum of the first bytes of the source IP, source port, protocol, destination IP, destination port - converted to a string value
+        // from the encapsulated IP packet
 
-        client_id_str = ip01 + ip02 + proto // sum en guise of the a one way hash to have same source/dest/proto (back and forth)
-        // eg if out going is going from 10.x.x.x to 75.x.x.x.via tcp, the sum will be 91 and the same for the reply traffic
-        // going from 75.x.x.x to 10.x.x.x. via tcp.
-        // s.off('upload');
+        client_id_str = require('crypto').createHash('md5').update(client_id_hash).digest('base64url')
+        //client_id_str is the md5 one-way hash of the client_id_hash value
         s.done();
       }
 
