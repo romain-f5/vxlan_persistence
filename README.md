@@ -1,22 +1,10 @@
 # vxlan_persistence
 
-Disable icmp unreachable from iptables: 
+If the upstreams are not configured to accept udp traffic on port 4789, disable icmp unreachable from iptables on the servers: 
 sudo iptables -I OUTPUT -p icmp --icmp-type destination-unreachable -j DROP. 
 gleaned from: https://serverfault.com/questions/522709/disable-icmp-unreachable-replies. 
 
-Install zeek:   
-https://docs.zeek.org/en/master/install.html. 
-
-Epel enabled on ec2 linux  
-https://aws.amazon.com/premiumsupport/knowledge-center/ec2-enable-epel/
-
-
-Use netcat to get traffic to the vs. 
-https://www.linuxtechi.com/nc-ncat-command-examples-linux-systems/
-
-while true; do cat aliases | nc -u 10.245.1.223 4789; sleep 1; done   
-Where aliases is flat file…   
-Crude but gets the job done'ish. 
+This provides a working NGINX configuration and initial NGINX Java Script to process,load-balance and persist vxlan traffic to multiple upstream servers.
 
 ----
 Mirroring:  
